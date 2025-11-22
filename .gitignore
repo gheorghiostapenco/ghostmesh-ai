@@ -1,0 +1,52 @@
+# --- 1. INFRASTRUCTURE (Terraform) ---
+# Critical: Contains your Oracle OCID and API Keys
+*.tfvars
+*.tfvars.json
+
+# Terraform state files (Contains IP addresses and metadata)
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# --- 2. CONFIGURATION (Ansible) ---
+# Contains your Server IP and SSH user
+inventory
+inventory.ini
+*.retry
+
+# --- 3. APPLICATION (Python & Docker) ---
+# Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment variables (API Keys, Passwords)
+.env
+.env.*
+
+# --- 4. SECRETS (The "Never Commit" List) ---
+# SSH Keys
+*.pem
+*.key
+*.pub
+id_rsa
+id_ed25519
+authorized_keys
+known_hosts
+
+# Certificates (SSL)
+*.crt
+*.csr
+
+# --- 5. OS JUNK FILES ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

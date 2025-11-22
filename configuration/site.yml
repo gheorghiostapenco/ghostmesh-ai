@@ -1,0 +1,103 @@
+---
+- name: Configure Oracle Cloud ARM Instance
+  hosts: all
+  become: yes
+  vars:
+    # CHANGE THIS to your desired username
+    user_name: "george"
+    # Path to your LOCAL public key (to copy to the server)
+    local_ssh_key: "~/.ssh/id_ed25519.pub"
+
+  tasks:
+    # --- SYSTEM UPDATES ---
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 # One day
+
+    - name: Install basic dependencies
+      apt:
+        name:
+          - curl
+          - git
+          - ufw
+          - fail2ban
+          - software-properties-common
+          - unzip
+        state: present
+
+    # --- USER SETUP ---
+    - name: Create a new regular user
+      user:
+        name: "{{ user_name }}"
+        shell: /bin/bash
+        groups: sudo,adm
+        append: yes
+        create_home: yes
+
+    - name: Add SSH key to the new user
+      authorized_key:
+        user: "{{ user_name }}"
+        state: present
+        key: "{{ lookup('file', local_ssh_key) }}"
+
+    - name: Allow 'sudo' without password (Optional - convenient for automation)
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    # --- SECURITY (UFW & Fail2Ban) ---
+    - name: Configure UFW (Allow SSH)
+      ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: Configure UFW (Allow HTTP/HTTPS)
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - '80'
+        - '443'
+
+    - name: Enable UFW Firewall
+      ufw:
+        state: enabled
+        policy: deny
+
+    # --- DOCKER INSTALLATION (ARM64 SPECIFIC) ---
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository (ARM64)
+      apt_repository:
+        repo: "deb [arch=arm64] https://download.docker.com/linux/ubuntu jammy stable"
+        state: present
+
+    - name: Install Docker Engine and Compose
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Add user to 'docker' group (to run docker without sudo)
+      user:
+        name: "{{ user_name }}"
+        groups: docker
+        append: yes
+
+    # --- CLEANUP ---
+    - name: Remove useless packages
+      apt:
+        autoremove: yes

@@ -1,0 +1,40 @@
+services:
+  # 1. The AI Engine
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_storage:/root/.ollama
+    restart: always
+
+  # 2. The Vector Database (Memory)
+  chromadb:
+    image: chromadb/chroma:latest
+    volumes:
+      - chroma_storage:/chroma/chroma
+    restart: always
+
+  # 3. Your Custom Python API
+  fastapi_app:
+    build: ./app
+    depends_on:
+      - ollama
+      - chromadb
+    restart: always
+
+  # 4. The Security Gate
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Mount the new certificates (Read-Only)
+      - /etc/letsencrypt/live/ghostmesh-ai.duckdns.org/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
+      - /etc/letsencrypt/live/ghostmesh-ai.duckdns.org/privkey.pem:/etc/nginx/certs/privkey.pem:ro
+    depends_on:
+      - fastapi_app
+
+volumes:
+  ollama_storage:
+  chroma_storage:
