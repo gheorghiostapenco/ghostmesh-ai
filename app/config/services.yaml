@@ -1,0 +1,33 @@
+- DevOps Stack:
+    - Jenkins:
+        icon: jenkins.png
+        href: https://build.crystalpine.dev
+        description: CI/CD Pipelines
+        container: jenkins # Connects to Docker to show status
+    - Portainer:
+        icon: portainer.png
+        href: https://admin.crystalpine.dev
+        description: Docker Manager
+        container: portainer
+    - Grafana:
+        icon: grafana.png
+        href: https://monitor.crystalpine.dev
+        description: Observability
+        container: grafana
+    - Prometheus:
+        icon: prometheus.png
+        href: https://monitor.crystalpine.dev # We hide Prom behind Grafana usually
+        description: Metrics DB
+        container: prometheus
+
+- AI Stack:
+    - GhostMesh AI:
+        icon: brain.png
+        href: https://crystalpine.dev
+        description: Private RAG API
+        container: fastapi_app
+    - Ollama:
+        icon: ollama.png
+        href: https://crystalpine.dev
+        description: LLM Engine
+        container: ollama

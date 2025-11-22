@@ -1,0 +1,13 @@
+title: CrystalPine Hub
+background:
+  image: https://images.unsplash.com/photo-1519608487953-e999c86e7455?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1920
+cardBlur: sm
+theme: dark
+color: slate
+layout:
+  DevOps Stack:
+    style: row
+    columns: 4
+  AI Stack:
+    style: row
+    columns: 2
