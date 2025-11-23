@@ -11,18 +11,6 @@ It leverages the **Oracle Cloud Always Free** tier (Ampere A1 ARM architecture) 
 
 ## 🏗 Architecture
 **Live Endpoint:** `https://crystalpine.dev`
-
-```mermaid
-graph LR
-    User((Client)) -->|HTTPS/443| CF[Cloudflare Proxy]
-    CF -->|Strict SSL| OCI[Oracle Cloud Firewall]
-    OCI -->|Ingress| Nginx[Nginx Reverse Proxy]
-    Nginx -->|Internal Network| API[FastAPI Wrapper]
-    API -->|Query| Chroma[ChromaDB Vector Store]
-    API -->|Inference| Ollama[Ollama (Llama 3.1)]
-
-## 🏗 Architecture
-**Live Endpoint:** `https://crystalpine.dev`
 **Infrastructure:** Oracle Cloud Always Free (Ampere A1 - 4 OCPU, 24GB RAM).
 **Security:** SSL/TLS via Let's Encrypt, Nginx Reverse Proxy, IP Whitelisting.
 
